@@ -32,7 +32,16 @@ Build a staff management application for a CA (Chartered Accountant) office with
 - Employee directory with role management
 - Login time logging
 - Role-based access control on all routes
-- Responsive design with mobile sidebar
+
+### Theme Redesign (March 2026 - Iteration 2)
+- Professional indigo color scheme (was dark navy blue)
+- Light white sidebar with indigo active indicators
+- Outfit + Figtree fonts (distinctive, professional)
+- Mobile bottom tab navigation (Dashboard, Tasks, Attendance, Leaves, More)
+- Mobile card views for tables (responsive breakpoints)
+- Staggered entrance animations for stat cards
+- Stat cards with colored left border accents
+- Touch-friendly 44px+ tap targets on mobile
 
 ## Prioritized Backlog
 ### P0 (Critical)
