@@ -1,0 +1,161 @@
+{
+  "design_system": {
+    "identity": {
+      "name": "The Swiss Vault",
+      "core_values": [
+        "Fiscal Clarity",
+        "Architectural Precision",
+        "Data Serenity"
+      ],
+      "aesthetic": "Swiss International Style meets Modern Fintech. High contrast, grid-based, whitespace-heavy but data-dense."
+    },
+    "typography": {
+      "font_family": {
+        "headings": "Manrope, sans-serif",
+        "body": "Public Sans, sans-serif",
+        "mono": "JetBrains Mono, monospace"
+      },
+      "usage_rules": {
+        "headings": "Use Manrope for all headings. Letter-spacing: -0.02em for sizes above 24px. Weights: 600 (SemiBold) or 800 (ExtraBold).",
+        "body": "Public Sans for all UI text. Excellent legibility at small sizes.",
+        "numbers": "Use tabular-nums class for all data tables and financial figures.",
+        "scale": {
+          "h1": "text-4xl md:text-5xl font-extrabold tracking-tight",
+          "h2": "text-3xl font-bold tracking-tight",
+          "h3": "text-2xl font-semibold tracking-tight",
+          "h4": "text-xl font-semibold",
+          "body_lg": "text-lg leading-relaxed",
+          "body": "text-base leading-normal",
+          "caption": "text-sm text-muted-foreground",
+          "tiny": "text-xs font-medium uppercase tracking-wider"
+        }
+      }
+    },
+    "colors": {
+      "palette": {
+        "base": {
+          "background": "#F8FAFC",
+          "surface": "#FFFFFF",
+          "foreground": "#0F172A"
+        },
+        "brand": {
+          "primary": "#2563EB",
+          "primary_foreground": "#FFFFFF",
+          "secondary": "#E2E8F0",
+          "secondary_foreground": "#1E293B"
+        },
+        "sidebar": {
+          "background": "#0F172A",
+          "foreground": "#F8FAFC",
+          "active": "#1E293B",
+          "active_foreground": "#FFFFFF"
+        },
+        "status": {
+          "success": "#10B981",
+          "success_bg": "#ECFDF5",
+          "warning": "#F59E0B",
+          "warning_bg": "#FFFBEB",
+          "error": "#EF4444",
+          "error_bg": "#FEF2F2",
+          "info": "#3B82F6",
+          "info_bg": "#EFF6FF"
+        }
+      },
+      "usage": {
+        "primary_action": "bg-blue-600 hover:bg-blue-700 text-white shadow-sm",
+        "secondary_action": "bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 shadow-sm",
+        "destructive_action": "bg-red-600 hover:bg-red-700 text-white shadow-sm",
+        "sidebar_link": "text-slate-400 hover:text-white hover:bg-slate-800",
+        "sidebar_link_active": "bg-blue-600 text-white shadow-md"
+      }
+    },
+    "spacing": {
+      "scale": "2x standard",
+      "containers": {
+        "page_padding": "p-6 md:p-8 lg:p-12",
+        "card_padding": "p-6",
+        "section_gap": "gap-8"
+      }
+    },
+    "layout": {
+      "grid_system": "Bento Grid Mode B (High Density)",
+      "dashboard_grid": "grid grid-cols-1 md:grid-cols-12 gap-6",
+      "containers": {
+        "main": "max-w-[1600px] mx-auto w-full",
+        "auth_split": "grid lg:grid-cols-2 h-screen w-full"
+      }
+    },
+    "components": {
+      "cards": {
+        "style": "bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200",
+        "header": "border-b border-slate-100 p-6",
+        "content": "p-6"
+      },
+      "tables": {
+        "style": "w-full text-sm",
+        "header": "h-12 px-4 text-left align-middle font-medium text-muted-foreground bg-slate-50/50",
+        "row": "border-b transition-colors hover:bg-slate-50/50 data-[state=selected]:bg-slate-100",
+        "cell": "p-4 align-middle [&:has([role=checkbox])]:pr-0"
+      },
+      "buttons": {
+        "base": "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        "variants": {
+          "default": "bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2",
+          "outline": "border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2",
+          "ghost": "hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+        }
+      },
+      "inputs": {
+        "base": "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+      }
+    },
+    "assets": {
+      "icons": {
+        "library": "lucide-react",
+        "style": "stroke-width: 1.5px; size: 16px (small) or 20px (default)"
+      },
+      "images": {
+        "login_background": {
+          "url": "https://images.unsplash.com/photo-1756363211480-026e8b9b6482?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNDR8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMGdlb21ldHJpYyUyMHdoaXRlJTIwcGFwZXIlMjBhcmNoaXRlY3R1cmV8ZW58MHx8fHwxNzcyNzk3MTQ1fDA&ixlib=rb-4.1.0&q=85",
+          "alt": "Abstract Modern Architecture"
+        },
+        "logo_placeholder": "Use a simple typographic logo 'CA.OS' in Manrope font."
+      }
+    },
+    "universal_guidelines": [
+      "Use 'sonner' for all toast notifications.",
+      "Ensure all interactive elements have data-testid attributes.",
+      "Do NOT use gradients for backgrounds, keep it flat and clean.",
+      "Use 'shadcn/ui' components as the base but customize spacing to be more generous.",
+      "Always include error handling in API calls.",
+      "Use 'lucide-react' for icons.",
+      "Date formatting: 'dd MMM yyyy' (e.g., 12 Oct 2023).",
+      "Currency formatting: '₹' symbol, 2 decimal places."
+    ]
+  },
+  "pages": {
+    "login": {
+      "layout": "Split screen. Left: Branding/Image. Right: Form.",
+      "image_url": "https://images.unsplash.com/photo-1756363211480-026e8b9b6482?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNDR8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMGdlb21ldHJpYyUyMHdoaXRlJTIwcGFwZXIlMjBhcmNoaXRlY3R1cmV8ZW58MHx8fHwxNzcyNzk3MTQ1fDA&ixlib=rb-4.1.0&q=85"
+    },
+    "dashboard": {
+      "layout": "Sidebar + Header + Main Content Grid",
+      "widgets": [
+        "Stats Overview (4 cards)",
+        "Recent Tasks Table (col-span-8)",
+        "Attendance/Leave Summary (col-span-4)"
+      ]
+    },
+    "tasks": {
+      "layout": "Full width table with filter bar (Search, Status, Assignee, Date Range)",
+      "features": ["Kanban Toggle (Optional)", "Row click to view details"]
+    }
+  },
+  "instructions_to_main_agent": {
+    "1": "Install 'lucide-react', 'recharts', 'sonner', 'date-fns', 'clsx', 'tailwind-merge'.",
+    "2": "Setup 'Manrope' and 'Public Sans' via Google Fonts in index.css.",
+    "3": "Implement the sidebar layout as the main Layout wrapper.",
+    "4": "Use the provided color palette in tailwind.config.js.",
+    "5": "Focus on 'Density' for tables but 'Airiness' for the overall page layout."
+  }
+}
