@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { Toaster } from '@/components/ui/sonner';
 import Layout from '@/components/Layout';
+import InstallPrompt from '@/components/InstallPrompt';
 import LoginPage from '@/pages/LoginPage';
 import DashboardPage from '@/pages/DashboardPage';
 import TasksPage from '@/pages/TasksPage';
@@ -54,6 +55,7 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <AppRoutes />
+        <InstallPrompt />
         <Toaster position="top-right" richColors />
       </AuthProvider>
     </BrowserRouter>

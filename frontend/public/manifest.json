@@ -1,0 +1,26 @@
+{
+  "short_name": "CA.OS",
+  "name": "CA.OS - Staff Management",
+  "description": "Complete staff management system for Chartered Accountant offices. Track tasks, attendance, leaves, clients and more.",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "theme_color": "#4F46E5",
+  "background_color": "#F9FAFB",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["business", "productivity"]
+}
