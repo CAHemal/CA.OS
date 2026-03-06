@@ -33,7 +33,14 @@ Build a staff management application for a CA (Chartered Accountant) office with
 - Login time logging
 - Role-based access control on all routes
 
-### Theme Redesign (March 2026 - Iteration 2)
+### PWA Enhancement (March 2026 - Iteration 3)
+- Progressive Web App manifest with installability
+- Service worker for offline caching (cache-first for assets, network-first for API)
+- Custom install prompt banner (bottom of screen on mobile, bottom-right on desktop)
+- Offline fallback page with retry button
+- Apple mobile web app meta tags
+- Custom app icons (192x192, 512x512)
+- Standalone display mode for native app-like experience
 - Professional indigo color scheme (was dark navy blue)
 - Light white sidebar with indigo active indicators
 - Outfit + Figtree fonts (distinctive, professional)
