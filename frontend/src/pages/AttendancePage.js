@@ -67,17 +67,17 @@ export default function AttendancePage() {
   return (
     <div data-testid="attendance-page" className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold font-heading tracking-tight">Attendance</h1>
-        <p className="text-muted-foreground mt-1">Track daily presence and working hours</p>
+        <h1 className="text-xl sm:text-2xl font-bold font-heading tracking-tight">Attendance</h1>
+        <p className="text-muted-foreground mt-1 text-sm">Track daily presence and working hours</p>
       </div>
 
       {/* Today's Status */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <Card className="border-slate-200 shadow-sm">
-          <CardContent className="p-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6">
+        <Card className="border-zinc-200 shadow-sm border-l-4 border-l-indigo-500">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
-                <Clock size={22} className="text-blue-600" strokeWidth={1.5} />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-indigo-50 flex items-center justify-center">
+                <Clock size={20} className="text-indigo-600" strokeWidth={1.5} />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Today's Status</p>
@@ -93,11 +93,11 @@ export default function AttendancePage() {
 
         {!isManager && (
           <>
-            <Card className="border-slate-200 shadow-sm">
-              <CardContent className="p-6">
+            <Card className="border-zinc-200 shadow-sm border-l-4 border-l-emerald-500">
+              <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center">
-                    <LogIn size={22} className="text-green-600" strokeWidth={1.5} />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 flex items-center justify-center">
+                    <LogIn size={20} className="text-emerald-600" strokeWidth={1.5} />
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Clock In</p>
@@ -108,11 +108,11 @@ export default function AttendancePage() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="border-slate-200 shadow-sm">
-              <CardContent className="p-6">
+            <Card className="border-zinc-200 shadow-sm border-l-4 border-l-amber-500">
+              <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center">
-                    <LogOut size={22} className="text-orange-600" strokeWidth={1.5} />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-50 flex items-center justify-center">
+                    <LogOut size={20} className="text-amber-600" strokeWidth={1.5} />
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Clock Out</p>
@@ -134,7 +134,7 @@ export default function AttendancePage() {
             data-testid="clock-in-btn"
             onClick={handleClockIn}
             disabled={clockLoading || isClockedIn || isClockedOut}
-            className="bg-green-600 hover:bg-green-700"
+            className="bg-emerald-600 hover:bg-emerald-700 flex-1 sm:flex-none h-11"
           >
             <LogIn size={16} className="mr-2" /> Clock In
           </Button>
@@ -142,7 +142,7 @@ export default function AttendancePage() {
             data-testid="clock-out-btn"
             onClick={handleClockOut}
             disabled={clockLoading || !isClockedIn || isClockedOut}
-            className="bg-orange-600 hover:bg-orange-700"
+            className="bg-amber-600 hover:bg-amber-700 flex-1 sm:flex-none h-11"
           >
             <LogOut size={16} className="mr-2" /> Clock Out
           </Button>
@@ -150,11 +150,11 @@ export default function AttendancePage() {
       )}
 
       {/* Attendance History */}
-      <Card className="border-slate-200 shadow-sm">
-        <CardHeader className="border-b border-slate-100 pb-4">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-heading flex items-center gap-2">
-              <Calendar size={18} className="text-blue-600" />
+      <Card className="border-zinc-200 shadow-sm">
+        <CardHeader className="border-b border-zinc-100 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <CardTitle className="text-base sm:text-lg font-heading flex items-center gap-2">
+              <Calendar size={18} className="text-indigo-600" />
               Attendance Records
             </CardTitle>
             <input
@@ -169,7 +169,7 @@ export default function AttendancePage() {
         <CardContent className="p-0">
           {loading ? (
             <div className="flex items-center justify-center h-32">
-              <div className="animate-spin w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full" />
+              <div className="animate-spin w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full" />
             </div>
           ) : records.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">No attendance records for this date</div>

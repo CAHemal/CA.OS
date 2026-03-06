@@ -91,17 +91,17 @@ export default function ClientsPage() {
     <div data-testid="clients-page" className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold font-heading tracking-tight">Clients</h1>
-          <p className="text-muted-foreground mt-1">Manage client information and services</p>
+          <h1 className="text-xl sm:text-2xl font-bold font-heading tracking-tight">Clients</h1>
+          <p className="text-muted-foreground mt-1 text-sm">Manage client information and services</p>
         </div>
         {isManager && (
-          <Button data-testid="create-client-btn" onClick={() => { resetForm(); setShowCreate(true); }} className="bg-blue-600 hover:bg-blue-700">
+          <Button data-testid="create-client-btn" onClick={() => { resetForm(); setShowCreate(true); }} className="bg-indigo-600 hover:bg-indigo-700">
             <Plus size={16} className="mr-2" /> Add Client
           </Button>
         )}
       </div>
 
-      <Card className="border-slate-200 shadow-sm">
+      <Card className="border-zinc-200 shadow-sm">
         <CardContent className="p-4">
           <div className="relative">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -110,7 +110,7 @@ export default function ClientsPage() {
         </CardContent>
       </Card>
 
-      <Card className="border-slate-200 shadow-sm">
+      <Card className="border-zinc-200 shadow-sm">
         <CardContent className="p-0">
           {loading ? (
             <div className="flex items-center justify-center h-32"><div className="animate-spin w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full" /></div>
@@ -119,7 +119,7 @@ export default function ClientsPage() {
           ) : (
             <Table>
               <TableHeader>
-                <TableRow className="bg-slate-50/50">
+                <TableRow className="bg-zinc-50/50">
                   <TableHead className="font-medium">Client</TableHead>
                   <TableHead className="font-medium">Company</TableHead>
                   <TableHead className="font-medium">Contact</TableHead>
@@ -131,7 +131,7 @@ export default function ClientsPage() {
               </TableHeader>
               <TableBody>
                 {filtered.map(c => (
-                  <TableRow key={c.id} className="hover:bg-slate-50/50">
+                  <TableRow key={c.id} className="hover:bg-zinc-50/50">
                     <TableCell className="font-medium">{c.name}</TableCell>
                     <TableCell className="text-muted-foreground">{c.company || '-'}</TableCell>
                     <TableCell>
@@ -145,7 +145,7 @@ export default function ClientsPage() {
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
                         {(c.services || []).slice(0, 2).map((s, i) => (
-                          <Badge key={i} variant="secondary" className="bg-blue-50 text-blue-700 border-0 text-xs">{s}</Badge>
+                          <Badge key={i} variant="secondary" className="bg-indigo-50 text-indigo-700 border-0 text-xs">{s}</Badge>
                         ))}
                         {(c.services || []).length > 2 && (
                           <Badge variant="secondary" className="bg-slate-100 text-slate-600 border-0 text-xs">+{c.services.length - 2}</Badge>
@@ -218,7 +218,7 @@ export default function ClientsPage() {
               </div>
               <div className="flex flex-wrap gap-1 mt-2">
                 {form.services.map((s, i) => (
-                  <Badge key={i} variant="secondary" className="bg-blue-50 text-blue-700 border-0 cursor-pointer hover:bg-red-50 hover:text-red-700" onClick={() => removeService(i)}>
+                  <Badge key={i} variant="secondary" className="bg-indigo-50 text-indigo-700 border-0 cursor-pointer hover:bg-red-50 hover:text-red-700" onClick={() => removeService(i)}>
                     {s} x
                   </Badge>
                 ))}
@@ -231,7 +231,7 @@ export default function ClientsPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => { setShowCreate(false); resetForm(); }}>Cancel</Button>
-            <Button data-testid="client-submit-btn" onClick={handleSubmit} className="bg-blue-600 hover:bg-blue-700">
+            <Button data-testid="client-submit-btn" onClick={handleSubmit} className="bg-indigo-600 hover:bg-indigo-700">
               {editClient ? 'Update' : 'Create'}
             </Button>
           </DialogFooter>

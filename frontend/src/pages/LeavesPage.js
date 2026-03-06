@@ -71,7 +71,7 @@ export default function LeavesPage() {
   const LeaveTable = ({ data, showActions = false, showEmployee = false }) => (
     <Table>
       <TableHeader>
-        <TableRow className="bg-slate-50/50">
+        <TableRow className="bg-zinc-50/50">
           {showEmployee && <TableHead className="font-medium">Employee</TableHead>}
           <TableHead className="font-medium">Type</TableHead>
           <TableHead className="font-medium">From</TableHead>
@@ -83,7 +83,7 @@ export default function LeavesPage() {
       </TableHeader>
       <TableBody>
         {data.map(l => (
-          <TableRow key={l.id} className="hover:bg-slate-50/50">
+          <TableRow key={l.id} className="hover:bg-zinc-50/50">
             {showEmployee && <TableCell className="font-medium">{l.user_name}</TableCell>}
             <TableCell>
               <Badge variant="secondary" className="bg-slate-100 text-slate-700 border-0 text-xs">
@@ -120,10 +120,10 @@ export default function LeavesPage() {
     <div data-testid="leaves-page" className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold font-heading tracking-tight">Leave Management</h1>
-          <p className="text-muted-foreground mt-1">Apply for leaves and track approvals</p>
+          <h1 className="text-xl sm:text-2xl font-bold font-heading tracking-tight">Leave Management</h1>
+          <p className="text-muted-foreground mt-1 text-sm">Apply for leaves and track approvals</p>
         </div>
-        <Button data-testid="apply-leave-btn" onClick={() => setShowApply(true)} className="bg-blue-600 hover:bg-blue-700">
+        <Button data-testid="apply-leave-btn" onClick={() => setShowApply(true)} className="bg-indigo-600 hover:bg-indigo-700">
           <Plus size={16} className="mr-2" /> Apply Leave
         </Button>
       </div>
@@ -145,7 +145,7 @@ export default function LeavesPage() {
         </TabsList>
 
         <TabsContent value="my-leaves">
-          <Card className="border-slate-200 shadow-sm">
+          <Card className="border-zinc-200 shadow-sm">
             <CardContent className="p-0">
               {loading ? (
                 <div className="flex items-center justify-center h-32"><div className="animate-spin w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full" /></div>
@@ -160,7 +160,7 @@ export default function LeavesPage() {
 
         {isManager && (
           <TabsContent value="approvals">
-            <Card className="border-slate-200 shadow-sm">
+            <Card className="border-zinc-200 shadow-sm">
               <CardContent className="p-0">
                 {pendingApprovals.length === 0 ? (
                   <div className="p-8 text-center text-muted-foreground">No pending approvals</div>
@@ -174,7 +174,7 @@ export default function LeavesPage() {
 
         {isManager && (
           <TabsContent value="all">
-            <Card className="border-slate-200 shadow-sm">
+            <Card className="border-zinc-200 shadow-sm">
               <CardContent className="p-0">
                 {leaves.length === 0 ? (
                   <div className="p-8 text-center text-muted-foreground">No leave records</div>
@@ -223,7 +223,7 @@ export default function LeavesPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowApply(false)}>Cancel</Button>
-            <Button data-testid="leave-submit-btn" onClick={handleApply} className="bg-blue-600 hover:bg-blue-700">Submit</Button>
+            <Button data-testid="leave-submit-btn" onClick={handleApply} className="bg-indigo-600 hover:bg-indigo-700">Submit</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

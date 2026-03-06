@@ -15,9 +15,9 @@ import { Plus, Search, Users, MoreHorizontal, Shield, UserCheck, UserX } from 'l
 import api from '@/lib/api';
 
 const roleColors = {
-  admin: 'bg-purple-100 text-purple-800',
-  manager: 'bg-blue-100 text-blue-800',
-  employee: 'bg-slate-100 text-slate-700',
+  admin: 'bg-indigo-100 text-indigo-800',
+  manager: 'bg-cyan-100 text-cyan-800',
+  employee: 'bg-zinc-100 text-zinc-700',
 };
 
 export default function EmployeesPage() {
@@ -89,15 +89,15 @@ export default function EmployeesPage() {
     <div data-testid="employees-page" className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold font-heading tracking-tight">Employees</h1>
-          <p className="text-muted-foreground mt-1">Manage staff members and roles</p>
+          <h1 className="text-xl sm:text-2xl font-bold font-heading tracking-tight">Employees</h1>
+          <p className="text-muted-foreground mt-1 text-sm">Manage staff members and roles</p>
         </div>
-        <Button data-testid="create-employee-btn" onClick={() => setShowCreate(true)} className="bg-blue-600 hover:bg-blue-700">
+        <Button data-testid="create-employee-btn" onClick={() => setShowCreate(true)} className="bg-indigo-600 hover:bg-indigo-700">
           <Plus size={16} className="mr-2" /> Add Employee
         </Button>
       </div>
 
-      <Card className="border-slate-200 shadow-sm">
+      <Card className="border-zinc-200 shadow-sm">
         <CardContent className="p-4">
           <div className="relative">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -106,7 +106,7 @@ export default function EmployeesPage() {
         </CardContent>
       </Card>
 
-      <Card className="border-slate-200 shadow-sm">
+      <Card className="border-zinc-200 shadow-sm">
         <CardContent className="p-0">
           {loading ? (
             <div className="flex items-center justify-center h-32"><div className="animate-spin w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full" /></div>
@@ -115,7 +115,7 @@ export default function EmployeesPage() {
           ) : (
             <Table>
               <TableHeader>
-                <TableRow className="bg-slate-50/50">
+                <TableRow className="bg-zinc-50/50">
                   <TableHead className="font-medium">Employee</TableHead>
                   <TableHead className="font-medium">Email</TableHead>
                   <TableHead className="font-medium">Department</TableHead>
@@ -127,11 +127,11 @@ export default function EmployeesPage() {
               </TableHeader>
               <TableBody>
                 {filtered.map(emp => (
-                  <TableRow key={emp.id} className="hover:bg-slate-50/50">
+                  <TableRow key={emp.id} className="hover:bg-zinc-50/50">
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <Avatar className="h-8 w-8">
-                          <AvatarFallback className="bg-blue-100 text-blue-700 text-xs">{getInitials(emp.name)}</AvatarFallback>
+                          <AvatarFallback className="bg-indigo-100 text-indigo-700 text-xs">{getInitials(emp.name)}</AvatarFallback>
                         </Avatar>
                         <div>
                           <p className="font-medium">{emp.name}</p>
@@ -225,7 +225,7 @@ export default function EmployeesPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowCreate(false)}>Cancel</Button>
-            <Button data-testid="emp-submit-btn" onClick={handleCreate} className="bg-blue-600 hover:bg-blue-700">Create Employee</Button>
+            <Button data-testid="emp-submit-btn" onClick={handleCreate} className="bg-indigo-600 hover:bg-indigo-700">Create Employee</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

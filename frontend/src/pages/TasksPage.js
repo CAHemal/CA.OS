@@ -15,14 +15,14 @@ import { Plus, Search, MoreHorizontal, Filter } from 'lucide-react';
 import api from '@/lib/api';
 
 const statusColors = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  in_progress: 'bg-blue-100 text-blue-800',
-  completed: 'bg-green-100 text-green-800',
+  pending: 'bg-amber-100 text-amber-800',
+  in_progress: 'bg-indigo-100 text-indigo-800',
+  completed: 'bg-emerald-100 text-emerald-800',
   overdue: 'bg-red-100 text-red-800',
 };
 const priorityColors = {
-  low: 'bg-slate-100 text-slate-700',
-  medium: 'bg-blue-100 text-blue-700',
+  low: 'bg-zinc-100 text-zinc-700',
+  medium: 'bg-indigo-100 text-indigo-700',
   high: 'bg-orange-100 text-orange-700',
   urgent: 'bg-red-100 text-red-700',
 };
@@ -95,18 +95,18 @@ export default function TasksPage() {
     <div data-testid="tasks-page" className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold font-heading tracking-tight">Tasks</h1>
-          <p className="text-muted-foreground mt-1">Manage and track task assignments</p>
+          <h1 className="text-xl sm:text-2xl font-bold font-heading tracking-tight">Tasks</h1>
+          <p className="text-muted-foreground mt-1 text-sm">Manage and track task assignments</p>
         </div>
         {isManager && (
-          <Button data-testid="create-task-btn" onClick={() => setShowCreate(true)} className="bg-blue-600 hover:bg-blue-700">
+          <Button data-testid="create-task-btn" onClick={() => setShowCreate(true)} className="bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto">
             <Plus size={16} className="mr-2" /> New Task
           </Button>
         )}
       </div>
 
       {/* Filters */}
-      <Card className="border-slate-200 shadow-sm">
+      <Card className="border-zinc-200 shadow-sm">
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
@@ -142,7 +142,7 @@ export default function TasksPage() {
       </Card>
 
       {/* Tasks Table */}
-      <Card className="border-slate-200 shadow-sm">
+      <Card className="border-zinc-200 shadow-sm">
         <CardContent className="p-0">
           {loading ? (
             <div className="flex items-center justify-center h-32">
@@ -151,46 +151,77 @@ export default function TasksPage() {
           ) : filtered.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">No tasks found</div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-slate-50/50">
-                  <TableHead className="font-medium">Task</TableHead>
-                  <TableHead className="font-medium">Assignee</TableHead>
-                  <TableHead className="font-medium">Client</TableHead>
-                  <TableHead className="font-medium">Priority</TableHead>
-                  <TableHead className="font-medium">Status</TableHead>
-                  <TableHead className="font-medium">Due Date</TableHead>
-                  <TableHead className="font-medium">Created</TableHead>
-                  <TableHead className="w-12"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <>
+              {/* Desktop Table */}
+              <div className="hidden md:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-zinc-50/50">
+                      <TableHead className="font-medium">Task</TableHead>
+                      <TableHead className="font-medium">Assignee</TableHead>
+                      <TableHead className="font-medium">Client</TableHead>
+                      <TableHead className="font-medium">Priority</TableHead>
+                      <TableHead className="font-medium">Status</TableHead>
+                      <TableHead className="font-medium">Due Date</TableHead>
+                      <TableHead className="font-medium">Created</TableHead>
+                      <TableHead className="w-12"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filtered.map(task => (
+                      <TableRow key={task.id} className="hover:bg-zinc-50/50">
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">{task.title}</p>
+                            {task.description && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{task.description}</p>}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">{task.assigned_to_name}</TableCell>
+                        <TableCell className="text-muted-foreground">{task.client_name || '-'}</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary" className={`${priorityColors[task.priority]} border-0 text-xs`}>{task.priority}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="secondary" className={`${statusColors[task.status]} border-0 text-xs`}>{task.status.replace('_', ' ')}</Badge>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground tabular-nums">
+                          {task.due_date ? new Date(task.due_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) : '-'}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground tabular-nums text-xs">
+                          {new Date(task.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button data-testid={`task-actions-${task.id}`} variant="ghost" size="icon" className="h-8 w-8">
+                                <MoreHorizontal size={14} />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              {task.status !== 'in_progress' && <DropdownMenuItem onClick={() => updateStatus(task.id, 'in_progress')}>Mark In Progress</DropdownMenuItem>}
+                              {task.status !== 'completed' && <DropdownMenuItem onClick={() => updateStatus(task.id, 'completed')}>Mark Complete</DropdownMenuItem>}
+                              {task.status !== 'pending' && <DropdownMenuItem onClick={() => updateStatus(task.id, 'pending')}>Mark Pending</DropdownMenuItem>}
+                              {isManager && <DropdownMenuItem className="text-red-600" onClick={() => deleteTask(task.id)}>Delete</DropdownMenuItem>}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              {/* Mobile Card View */}
+              <div className="md:hidden divide-y divide-zinc-100">
                 {filtered.map(task => (
-                  <TableRow key={task.id} className="hover:bg-slate-50/50">
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{task.title}</p>
+                  <div key={task.id} className="p-4 space-y-2.5">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-sm">{task.title}</p>
                         {task.description && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{task.description}</p>}
                       </div>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">{task.assigned_to_name}</TableCell>
-                    <TableCell className="text-muted-foreground">{task.client_name || '-'}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className={`${priorityColors[task.priority]} border-0 text-xs`}>{task.priority}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className={`${statusColors[task.status]} border-0 text-xs`}>{task.status.replace('_', ' ')}</Badge>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground tabular-nums">
-                      {task.due_date ? new Date(task.due_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) : '-'}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground tabular-nums text-xs">
-                      {new Date(task.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
-                    </TableCell>
-                    <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button data-testid={`task-actions-${task.id}`} variant="ghost" size="icon" className="h-8 w-8">
+                          <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0">
                             <MoreHorizontal size={14} />
                           </Button>
                         </DropdownMenuTrigger>
@@ -201,11 +232,17 @@ export default function TasksPage() {
                           {isManager && <DropdownMenuItem className="text-red-600" onClick={() => deleteTask(task.id)}>Delete</DropdownMenuItem>}
                         </DropdownMenuContent>
                       </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2 text-xs">
+                      <span className="text-muted-foreground">{task.assigned_to_name}</span>
+                      <Badge variant="secondary" className={`${priorityColors[task.priority]} border-0 text-[10px]`}>{task.priority}</Badge>
+                      <Badge variant="secondary" className={`${statusColors[task.status]} border-0 text-[10px]`}>{task.status.replace('_', ' ')}</Badge>
+                      {task.due_date && <span className="text-muted-foreground tabular-nums ml-auto">Due {new Date(task.due_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</span>}
+                    </div>
+                  </div>
                 ))}
-              </TableBody>
-            </Table>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>
@@ -271,7 +308,7 @@ export default function TasksPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowCreate(false)}>Cancel</Button>
-            <Button data-testid="task-submit-btn" onClick={handleCreate} className="bg-blue-600 hover:bg-blue-700">Create Task</Button>
+            <Button data-testid="task-submit-btn" onClick={handleCreate} className="bg-indigo-600 hover:bg-indigo-700">Create Task</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

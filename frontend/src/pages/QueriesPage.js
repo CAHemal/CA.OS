@@ -16,9 +16,9 @@ import { Plus, MessageSquare, Send, XCircle } from 'lucide-react';
 import api from '@/lib/api';
 
 const statusColors = {
-  open: 'bg-blue-100 text-blue-800',
-  responded: 'bg-green-100 text-green-800',
-  closed: 'bg-slate-100 text-slate-700',
+  open: 'bg-indigo-100 text-indigo-800',
+  responded: 'bg-emerald-100 text-emerald-800',
+  closed: 'bg-zinc-100 text-zinc-700',
 };
 
 export default function QueriesPage() {
@@ -85,20 +85,20 @@ export default function QueriesPage() {
     <div data-testid="queries-page" className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold font-heading tracking-tight">Queries</h1>
-          <p className="text-muted-foreground mt-1">Internal communication and query resolution</p>
+          <h1 className="text-xl sm:text-2xl font-bold font-heading tracking-tight">Queries</h1>
+          <p className="text-muted-foreground mt-1 text-sm">Internal communication and query resolution</p>
         </div>
-        <Button data-testid="create-query-btn" onClick={() => setShowCreate(true)} className="bg-blue-600 hover:bg-blue-700">
+        <Button data-testid="create-query-btn" onClick={() => setShowCreate(true)} className="bg-indigo-600 hover:bg-indigo-700">
           <Plus size={16} className="mr-2" /> New Query
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
         {/* Query List */}
-        <Card className="lg:col-span-5 border-slate-200 shadow-sm">
-          <CardHeader className="border-b border-slate-100 pb-4">
-            <CardTitle className="text-lg font-heading flex items-center gap-2">
-              <MessageSquare size={18} className="text-blue-600" /> All Queries
+        <Card className={`lg:col-span-5 border-zinc-200 shadow-sm ${selectedQuery ? 'hidden lg:block' : ''}`}>
+          <CardHeader className="border-b border-zinc-100 pb-4">
+            <CardTitle className="text-base sm:text-lg font-heading flex items-center gap-2">
+              <MessageSquare size={18} className="text-indigo-600" /> All Queries
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -114,7 +114,7 @@ export default function QueriesPage() {
                       key={q.id}
                       data-testid={`query-item-${q.id}`}
                       onClick={() => setSelectedQuery(q)}
-                      className={`p-4 cursor-pointer transition-colors hover:bg-slate-50 ${selectedQuery?.id === q.id ? 'bg-blue-50 border-l-2 border-l-blue-600' : ''}`}
+                      className={`p-4 cursor-pointer transition-colors hover:bg-slate-50 ${selectedQuery?.id === q.id ? 'bg-indigo-50 border-l-2 border-l-indigo-600' : ''}`}
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0 flex-1">
@@ -127,7 +127,7 @@ export default function QueriesPage() {
                       <div className="flex items-center gap-2 mt-2">
                         <span className="text-xs text-muted-foreground">{new Date(q.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</span>
                         {q.responses?.length > 0 && (
-                          <span className="text-xs text-blue-600">{q.responses.length} response{q.responses.length > 1 ? 's' : ''}</span>
+                          <span className="text-xs text-indigo-600">{q.responses.length} response{q.responses.length > 1 ? 's' : ''}</span>
                         )}
                       </div>
                     </div>
@@ -139,7 +139,7 @@ export default function QueriesPage() {
         </Card>
 
         {/* Query Detail */}
-        <Card className="lg:col-span-7 border-slate-200 shadow-sm">
+        <Card className={`lg:col-span-7 border-zinc-200 shadow-sm ${!selectedQuery ? 'hidden lg:block' : ''}`}>
           <CardContent className="p-0">
             {!selectedQuery ? (
               <div className="flex flex-col items-center justify-center h-[560px] text-muted-foreground">
@@ -147,10 +147,16 @@ export default function QueriesPage() {
                 <p>Select a query to view details</p>
               </div>
             ) : (
-              <div className="flex flex-col h-[560px]">
-                <div className="p-6 border-b border-slate-100">
-                  <div className="flex items-start justify-between">
-                    <div>
+              <div className="flex flex-col h-[calc(100vh-220px)] lg:h-[560px]">
+                <div className="p-4 sm:p-6 border-b border-zinc-100">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <button onClick={() => setSelectedQuery(null)} className="lg:hidden text-zinc-400 hover:text-zinc-900">
+                          <X size={18} />
+                        </button>
+                        <h3 className="font-semibold font-heading text-base sm:text-lg truncate">{selectedQuery.title}</h3>
+                      </div>
                       <h3 className="font-semibold font-heading text-lg">{selectedQuery.title}</h3>
                       <p className="text-sm text-muted-foreground mt-1">
                         {selectedQuery.from_user_name}{selectedQuery.to_user_name ? ` → ${selectedQuery.to_user_name}` : ''} ·{' '}
@@ -199,7 +205,7 @@ export default function QueriesPage() {
                         placeholder="Type your response..."
                         onKeyDown={e => e.key === 'Enter' && handleRespond()}
                       />
-                      <Button data-testid="query-send-btn" onClick={handleRespond} className="bg-blue-600 hover:bg-blue-700">
+                      <Button data-testid="query-send-btn" onClick={handleRespond} className="bg-indigo-600 hover:bg-indigo-700">
                         <Send size={16} />
                       </Button>
                     </div>
@@ -241,7 +247,7 @@ export default function QueriesPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowCreate(false)}>Cancel</Button>
-            <Button data-testid="query-submit-btn" onClick={handleCreate} className="bg-blue-600 hover:bg-blue-700">Submit</Button>
+            <Button data-testid="query-submit-btn" onClick={handleCreate} className="bg-indigo-600 hover:bg-indigo-700">Submit</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
