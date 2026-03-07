@@ -152,7 +152,11 @@ async def login(req: LoginRequest):
         "login_time": datetime.now(timezone.utc).isoformat()
     })
     user_safe = {k: v for k, v in user.items() if k != "password_hash"}
-    return {"token": token, "user": user_safe}
+    return {
+    "access_token": token,
+    "token_type": "bearer",
+    "user": user_safe
+}
 
 @api_router.get("/auth/me")
 async def get_me(user: dict = Depends(get_current_user)):
