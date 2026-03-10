@@ -26,6 +26,11 @@ JWT_EXPIRATION_HOURS = 24
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 app = FastAPI()
+from fastapi.security import HTTPBearer
+
+security = HTTPBearer()
+
+app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -158,8 +163,11 @@ async def login(req: LoginRequest):
     "user": user_safe
 }
 
+from fastapi import Depends
+from fastapi.security import HTTPAuthorizationCredentials
+
 @api_router.get("/auth/me")
-async def get_me(user: dict = Depends(get_current_user)):
+async def get_me(credentials: HTTPAuthorizationCredentials = Depends(security)):
     return user
 
 @api_router.put("/auth/profile")
