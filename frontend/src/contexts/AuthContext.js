@@ -37,12 +37,12 @@ setToken(data.access_token);
     return data;
   };
 
-  const logout = () => {
-    localStorage.removeItem('caos_token');
-    setToken(null);
-    setUser(null);
-  };
-
+ const logout = () => {
+  localStorage.removeItem('caos_token');
+  setToken(null);
+  setUser(null);
+  window.location.href = "/login";
+};
   return (
     <AuthContext.Provider value={{ user, token, loading, login, logout, fetchUser }}>
       {children}
