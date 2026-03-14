@@ -14,6 +14,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import ChangePasswordDialog from '@/components/ChangePasswordDialog';
+import ProfileDialog from '@/components/ProfileDialog';
 import api from '@/lib/api';
 
 const navItems = [
@@ -34,6 +35,7 @@ export default function Layout({ children }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [moreOpen, setMoreOpen] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   const fetchNotifications = useCallback(async () => {
     try {
@@ -109,13 +111,15 @@ export default function Layout({ children }) {
         {/* User */}
         <div className="p-4 border-t border-zinc-100">
           <div className="flex items-center gap-3">
-            <Avatar className="h-9 w-9 ring-2 ring-indigo-100">
-              <AvatarFallback className="bg-indigo-600 text-white text-xs font-semibold">{getInitials(user?.name)}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate text-zinc-900">{user?.name}</p>
+            <button onClick={() => setShowProfile(true)} className="shrink-0" data-testid="sidebar-profile-btn">
+              <Avatar className="h-9 w-9 ring-2 ring-indigo-100 hover:ring-indigo-300 transition-all cursor-pointer">
+                <AvatarFallback className="bg-indigo-600 text-white text-xs font-semibold">{getInitials(user?.name)}</AvatarFallback>
+              </Avatar>
+            </button>
+            <button onClick={() => setShowProfile(true)} className="flex-1 min-w-0 text-left">
+              <p className="text-sm font-semibold truncate text-zinc-900 hover:text-indigo-600 transition-colors">{user?.name}</p>
               <p className="text-xs text-zinc-400 capitalize">{user?.role}</p>
-            </div>
+            </button>
             <div className="flex gap-1">
               <Button data-testid="change-password-btn" variant="ghost" size="icon" className="text-zinc-400 hover:text-indigo-600 h-8 w-8" onClick={() => setShowChangePassword(true)} title="Change Password">
                 <KeyRound size={15} />
@@ -178,15 +182,15 @@ export default function Layout({ children }) {
             </DropdownMenu>
 
             {/* Desktop user badge */}
-            <div className="hidden lg:flex items-center gap-2.5 pl-2 ml-1 border-l border-zinc-200">
+            <button onClick={() => setShowProfile(true)} className="hidden lg:flex items-center gap-2.5 pl-2 ml-1 border-l border-zinc-200 hover:opacity-80 transition-opacity" data-testid="header-profile-btn">
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="bg-indigo-600 text-white text-xs">{getInitials(user?.name)}</AvatarFallback>
               </Avatar>
-              <div>
+              <div className="text-left">
                 <p className="text-sm font-medium text-zinc-900">{user?.name}</p>
                 <p className="text-[11px] text-zinc-400 capitalize">{user?.role}</p>
               </div>
-            </div>
+            </button>
           </div>
         </header>
 
@@ -252,15 +256,19 @@ export default function Layout({ children }) {
                   );
                 })}
                 <div className="border-t border-zinc-100 mt-3 pt-3">
-                  <div className="flex items-center gap-3 px-3 py-2">
+                  <button
+                    onClick={() => { setMoreOpen(false); setShowProfile(true); }}
+                    className="flex items-center gap-3 px-3 py-2 w-full"
+                    data-testid="mobile-profile-btn"
+                  >
                     <Avatar className="h-9 w-9">
                       <AvatarFallback className="bg-indigo-600 text-white text-xs">{getInitials(user?.name)}</AvatarFallback>
                     </Avatar>
-                    <div className="flex-1">
+                    <div className="flex-1 text-left">
                       <p className="text-sm font-semibold text-zinc-900">{user?.name}</p>
                       <p className="text-xs text-zinc-400 capitalize">{user?.role}</p>
                     </div>
-                  </div>
+                  </button>
                   <button
                     data-testid="mobile-change-pw-btn"
                     onClick={() => { setMoreOpen(false); setShowChangePassword(true); }}
@@ -283,6 +291,7 @@ export default function Layout({ children }) {
       </nav>
 
       <ChangePasswordDialog open={showChangePassword} onOpenChange={setShowChangePassword} />
+      <ProfileDialog open={showProfile} onOpenChange={setShowProfile} />
     </div>
   );
 }

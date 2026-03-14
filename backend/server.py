@@ -170,8 +170,11 @@ def send_twilio_otp(phone_number: str):
             .verifications.create(to=phone, channel="sms")
         return verification.status
     except Exception as e:
-        logger.error(f"Twilio OTP send failed: {e}")
-        raise HTTPException(status_code=400, detail=f"Failed to send OTP: {str(e)}")
+        error_msg = str(e)
+        logger.error(f"Twilio OTP send failed: {error_msg}")
+        if "unverified" in error_msg.lower() or "not a valid" in error_msg.lower():
+            raise HTTPException(status_code=400, detail="This phone number is not verified in Twilio. For trial accounts, please verify the number at twilio.com/console or contact your admin.")
+        raise HTTPException(status_code=400, detail=f"Failed to send OTP. Please check the phone number and try again.")
 
 def verify_twilio_otp(phone_number: str, code: str) -> bool:
     """Verify OTP code via Twilio Verify service."""
