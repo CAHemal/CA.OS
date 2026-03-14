@@ -12,4 +12,4 @@ root.render(
 );
 
 // Register service worker for PWA
-register();
+// register();
