@@ -40,12 +40,10 @@ JWT_EXPIRATION_HOURS = 24
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-app = FastAPI()
 from fastapi.security import HTTPBearer
 
 security = HTTPBearer()
 
-app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
