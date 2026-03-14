@@ -33,6 +33,14 @@ Build a staff management application for a CA (Chartered Accountant) office with
 - Login time logging
 - Role-based access control on all routes
 
+### OTP Password Change/Reset (March 2026 - Iteration 4)
+- Twilio SMS integration for OTP-based password operations
+- Forgot Password flow: Login page → Enter email → OTP sent to registered phone → Verify OTP → Set new password
+- Change Password flow: Dashboard sidebar → Send OTP → Verify OTP → Set new password
+- Proper error handling (no phone registered, invalid OTP, expired OTP)
+- Resend OTP functionality
+- Phone number auto-prefixed with +91 (India) for E.164 format
+
 ### PWA Enhancement (March 2026 - Iteration 3)
 - Progressive Web App manifest with installability
 - Service worker for offline caching (cache-first for assets, network-first for API)
