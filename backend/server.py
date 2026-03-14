@@ -3,6 +3,17 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://ca-os-self.vercel.app",
+        "http://localhost:3000"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 from fastapi import APIRouter, HTTPException, Depends, Header
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -621,14 +632,6 @@ async def list_login_logs(user: dict = Depends(get_current_user)):
 # ─── Include Router & Middleware ───────────────────────────────
 
 app.include_router(api_router)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # ─── Seed Admin on Startup ────────────────────────────────────
 
