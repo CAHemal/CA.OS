@@ -3,17 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "https://ca-os-self.vercel.app",
-        "http://localhost:3000"
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 from fastapi import APIRouter, HTTPException, Depends, Header
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -180,7 +169,7 @@ from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials
 
 @api_router.get("/auth/me")
-async def get_me(credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def get_me(user: dict = Depends(get_current_user)):
     return user
 
 @api_router.put("/auth/profile")
