@@ -282,6 +282,66 @@ class CAOSAPITester:
         else:
             self.log_test("Get Notifications", False, f"Status: {status}")
 
+    def test_forgot_password_send_otp(self):
+        """Test forgot password OTP sending"""
+        # Test with admin email (should work)
+        success, response, status = self.make_request('POST', 'auth/forgot-password/send-otp', 
+                                                    {'email': 'admin@caos.com'}, 200)
+        if success and 'masked_phone' in response:
+            self.log_test("Forgot Password Send OTP (Valid Email)", True)
+        else:
+            self.log_test("Forgot Password Send OTP (Valid Email)", False, f"Status: {status}, Response: {response}")
+        
+        # Test with non-existent email (should return 404)
+        success, response, status = self.make_request('POST', 'auth/forgot-password/send-otp', 
+                                                    {'email': 'nonexistent@test.com'}, 404)
+        if status == 404:
+            self.log_test("Forgot Password Send OTP (Invalid Email)", True)
+        else:
+            self.log_test("Forgot Password Send OTP (Invalid Email)", False, f"Expected 404, got {status}")
+
+    def test_forgot_password_verify_invalid_code(self):
+        """Test forgot password verification with invalid code"""
+        success, response, status = self.make_request('POST', 'auth/forgot-password/verify-reset',
+                                                    {
+                                                        'email': 'admin@caos.com',
+                                                        'code': '123456',  # Invalid code
+                                                        'new_password': 'newpass123'
+                                                    }, 400)
+        if status == 400:
+            self.log_test("Forgot Password Verify (Invalid Code)", True)
+        else:
+            self.log_test("Forgot Password Verify (Invalid Code)", False, f"Expected 400, got {status}")
+
+    def test_change_password_send_otp_authenticated(self):
+        """Test change password OTP sending for authenticated user"""
+        # This requires authentication
+        if not self.token:
+            self.log_test("Change Password Send OTP (Authenticated)", False, "No authentication token")
+            return
+        
+        success, response, status = self.make_request('POST', 'auth/change-password/send-otp', {}, 200)
+        if success and 'masked_phone' in response:
+            self.log_test("Change Password Send OTP (Authenticated)", True)
+        else:
+            self.log_test("Change Password Send OTP (Authenticated)", False, f"Status: {status}, Response: {response}")
+
+    def test_change_password_verify_invalid_code(self):
+        """Test change password verification with invalid code"""
+        if not self.token:
+            self.log_test("Change Password Verify (Invalid Code)", False, "No authentication token")
+            return
+        
+        success, response, status = self.make_request('POST', 'auth/change-password/verify',
+                                                    {
+                                                        'code': '123456',  # Invalid code
+                                                        'new_password': 'newpass123'
+                                                    }, 400)
+        if status == 400:
+            self.log_test("Change Password Verify (Invalid Code)", True)
+        else:
+            self.log_test("Change Password Verify (Invalid Code)", False, f"Expected 400, got {status}")
+
     def run_all_tests(self):
         """Run all API tests"""
         print("🚀 Starting CA.OS API Testing...")
@@ -302,6 +362,12 @@ class CAOSAPITester:
         self.test_client_crud()
         self.test_query_system()
         self.test_notifications()
+        
+        # Test new OTP-based password features
+        self.test_forgot_password_send_otp()
+        self.test_forgot_password_verify_invalid_code()
+        self.test_change_password_send_otp_authenticated()
+        self.test_change_password_verify_invalid_code()
 
         # Print results
         print("\n" + "=" * 50)

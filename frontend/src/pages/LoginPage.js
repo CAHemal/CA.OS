@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -125,9 +126,14 @@ export default function LoginPage() {
                   <span className="flex items-center gap-2">Sign in <ArrowRight size={16} /></span>
                 )}
               </Button>
-              <p className="text-xs text-center text-muted-foreground mt-4">
-                Default: admin@caos.com / admin123
-              </p>
+              <div className="flex items-center justify-between mt-3">
+                <Link to="/forgot-password" data-testid="forgot-password-link" className="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+                  Forgot password?
+                </Link>
+                <p className="text-xs text-muted-foreground">
+                  admin@caos.com / admin123
+                </p>
+              </div>
             </form>
           </CardContent>
         </Card>

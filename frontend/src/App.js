@@ -4,6 +4,7 @@ import { Toaster } from '@/components/ui/sonner';
 import Layout from '@/components/Layout';
 import InstallPrompt from '@/components/InstallPrompt';
 import LoginPage from '@/pages/LoginPage';
+import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
 import DashboardPage from '@/pages/DashboardPage';
 import TasksPage from '@/pages/TasksPage';
 import AttendancePage from '@/pages/AttendancePage';
@@ -38,6 +39,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
+      <Route path="/forgot-password" element={user ? <Navigate to="/dashboard" replace /> : <ForgotPasswordPage />} />
       <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
       <Route path="/tasks" element={<ProtectedRoute><TasksPage /></ProtectedRoute>} />
       <Route path="/attendance" element={<ProtectedRoute><AttendancePage /></ProtectedRoute>} />

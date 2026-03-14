@@ -11,6 +11,7 @@ import uuid
 from datetime import datetime, timezone, timedelta
 from passlib.context import CryptContext
 from jose import jwt, JWTError
+from twilio.rest import Client as TwilioClient
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -24,6 +25,13 @@ JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 24
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# Twilio Config
+twilio_client = TwilioClient(
+    os.environ.get('TWILIO_ACCOUNT_SID'),
+    os.environ.get('TWILIO_AUTH_TOKEN')
+)
+TWILIO_VERIFY_SERVICE = os.environ.get('TWILIO_VERIFY_SERVICE')
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -92,6 +100,21 @@ class EmployeeUpdate(BaseModel):
     phone: Optional[str] = None
     is_active: Optional[bool] = None
 
+class SendOTPRequest(BaseModel):
+    email: str
+
+class VerifyOTPResetRequest(BaseModel):
+    email: str
+    code: str
+    new_password: str
+
+class ChangePasswordRequest(BaseModel):
+    code: str
+    new_password: str
+
+class SendChangeOTPRequest(BaseModel):
+    pass
+
 # ─── Auth Helpers ──────────────────────────────────────────────
 
 def create_token(user_id: str, role: str) -> str:
@@ -133,6 +156,35 @@ async def create_notification(user_id: str, ntype: str, message: str, reference_
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     await db.notifications.insert_one(doc)
+
+def send_twilio_otp(phone_number: str):
+    """Send OTP via Twilio Verify service. Phone must be E.164 format."""
+    if not phone_number:
+        raise HTTPException(status_code=400, detail="No phone number registered for this account. Please contact admin to add your phone number.")
+    # Ensure E.164 format
+    phone = phone_number.strip()
+    if not phone.startswith('+'):
+        phone = '+91' + phone  # Default to India (+91) for CA office
+    try:
+        verification = twilio_client.verify.v2.services(TWILIO_VERIFY_SERVICE) \
+            .verifications.create(to=phone, channel="sms")
+        return verification.status
+    except Exception as e:
+        logger.error(f"Twilio OTP send failed: {e}")
+        raise HTTPException(status_code=400, detail=f"Failed to send OTP: {str(e)}")
+
+def verify_twilio_otp(phone_number: str, code: str) -> bool:
+    """Verify OTP code via Twilio Verify service."""
+    phone = phone_number.strip()
+    if not phone.startswith('+'):
+        phone = '+91' + phone
+    try:
+        check = twilio_client.verify.v2.services(TWILIO_VERIFY_SERVICE) \
+            .verification_checks.create(to=phone, code=code)
+        return check.status == "approved"
+    except Exception as e:
+        logger.error(f"Twilio OTP verify failed: {e}")
+        return False
 
 # ─── Auth Routes ───────────────────────────────────────────────
 
@@ -189,6 +241,61 @@ async def register_user(req: RegisterRequest, user: dict = Depends(get_current_u
     new_user.pop("password_hash")
     new_user.pop("_id", None)
     return new_user
+
+# ─── OTP Password Routes ──────────────────────────────────────
+
+@api_router.post("/auth/forgot-password/send-otp")
+async def forgot_password_send_otp(req: SendOTPRequest):
+    """Send OTP to user's registered phone for password reset (public route)."""
+    user = await db.users.find_one({"email": req.email}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="No account found with this email")
+    if not user.get("phone"):
+        raise HTTPException(status_code=400, detail="No phone number registered for this account. Please contact your admin.")
+    status = send_twilio_otp(user["phone"])
+    # Mask phone for display
+    phone = user["phone"]
+    masked = phone[:4] + "****" + phone[-2:] if len(phone) > 6 else "****"
+    return {"status": status, "masked_phone": masked, "message": f"OTP sent to {masked}"}
+
+@api_router.post("/auth/forgot-password/verify-reset")
+async def forgot_password_verify_reset(req: VerifyOTPResetRequest):
+    """Verify OTP and reset password (public route)."""
+    user = await db.users.find_one({"email": req.email}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="No account found with this email")
+    if not user.get("phone"):
+        raise HTTPException(status_code=400, detail="No phone number registered")
+    is_valid = verify_twilio_otp(user["phone"], req.code)
+    if not is_valid:
+        raise HTTPException(status_code=400, detail="Invalid or expired OTP code")
+    new_hash = pwd_context.hash(req.new_password)
+    await db.users.update_one({"email": req.email}, {"$set": {"password_hash": new_hash}})
+    return {"message": "Password reset successfully. You can now login with your new password."}
+
+@api_router.post("/auth/change-password/send-otp")
+async def change_password_send_otp(user: dict = Depends(get_current_user)):
+    """Send OTP to current user's phone for password change (authenticated)."""
+    full_user = await db.users.find_one({"id": user["id"]}, {"_id": 0})
+    if not full_user.get("phone"):
+        raise HTTPException(status_code=400, detail="No phone number registered. Please ask admin to update your profile with a phone number.")
+    status = send_twilio_otp(full_user["phone"])
+    phone = full_user["phone"]
+    masked = phone[:4] + "****" + phone[-2:] if len(phone) > 6 else "****"
+    return {"status": status, "masked_phone": masked, "message": f"OTP sent to {masked}"}
+
+@api_router.post("/auth/change-password/verify")
+async def change_password_verify(req: ChangePasswordRequest, user: dict = Depends(get_current_user)):
+    """Verify OTP and change password (authenticated)."""
+    full_user = await db.users.find_one({"id": user["id"]}, {"_id": 0})
+    if not full_user.get("phone"):
+        raise HTTPException(status_code=400, detail="No phone number registered")
+    is_valid = verify_twilio_otp(full_user["phone"], req.code)
+    if not is_valid:
+        raise HTTPException(status_code=400, detail="Invalid or expired OTP code")
+    new_hash = pwd_context.hash(req.new_password)
+    await db.users.update_one({"id": user["id"]}, {"$set": {"password_hash": new_hash}})
+    return {"message": "Password changed successfully"}
 
 # ─── Employee Routes ───────────────────────────────────────────
 

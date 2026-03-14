@@ -3,7 +3,7 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   LayoutDashboard, ListTodo, Clock, CalendarDays,
-  Users, Building2, MessageSquare, Bell, LogOut, Menu, X, MoreHorizontal
+  Users, Building2, MessageSquare, Bell, LogOut, Menu, X, MoreHorizontal, KeyRound
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import ChangePasswordDialog from '@/components/ChangePasswordDialog';
 import api from '@/lib/api';
 
 const navItems = [
@@ -32,6 +33,7 @@ export default function Layout({ children }) {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [moreOpen, setMoreOpen] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
 
   const fetchNotifications = useCallback(async () => {
     try {
@@ -114,9 +116,14 @@ export default function Layout({ children }) {
               <p className="text-sm font-semibold truncate text-zinc-900">{user?.name}</p>
               <p className="text-xs text-zinc-400 capitalize">{user?.role}</p>
             </div>
-            <Button data-testid="logout-btn" variant="ghost" size="icon" className="text-zinc-400 hover:text-red-500 h-8 w-8" onClick={handleLogout}>
-              <LogOut size={16} />
-            </Button>
+            <div className="flex gap-1">
+              <Button data-testid="change-password-btn" variant="ghost" size="icon" className="text-zinc-400 hover:text-indigo-600 h-8 w-8" onClick={() => setShowChangePassword(true)} title="Change Password">
+                <KeyRound size={15} />
+              </Button>
+              <Button data-testid="logout-btn" variant="ghost" size="icon" className="text-zinc-400 hover:text-red-500 h-8 w-8" onClick={handleLogout}>
+                <LogOut size={15} />
+              </Button>
+            </div>
           </div>
         </div>
       </aside>
@@ -255,6 +262,13 @@ export default function Layout({ children }) {
                     </div>
                   </div>
                   <button
+                    data-testid="mobile-change-pw-btn"
+                    onClick={() => { setMoreOpen(false); setShowChangePassword(true); }}
+                    className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-zinc-600 hover:bg-zinc-50 w-full transition-all"
+                  >
+                    <KeyRound size={20} strokeWidth={1.5} /> Change Password
+                  </button>
+                  <button
                     data-testid="mobile-logout-btn"
                     onClick={handleLogout}
                     className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 w-full transition-all"
@@ -267,6 +281,8 @@ export default function Layout({ children }) {
           </Sheet>
         </div>
       </nav>
+
+      <ChangePasswordDialog open={showChangePassword} onOpenChange={setShowChangePassword} />
     </div>
   );
 }
