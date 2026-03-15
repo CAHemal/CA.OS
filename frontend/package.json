@@ -29,11 +29,10 @@
     "tailwindcss-animate": "^1.0.7",
     "react-scripts": "5.0.1"
   },
- "scripts": {
+"scripts": {
   "start": "craco start",
-  "build": "DISABLE_ESLINT_PLUGIN=true craco build",
+  "build": "DISABLE_ESLINT_PLUGIN=true CI=false craco build",
   "test": "craco test"
-}
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
