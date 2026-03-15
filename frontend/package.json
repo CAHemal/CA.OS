@@ -2,6 +2,9 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+  "node": "18.x"
+},
   "dependencies": {
   "@craco/craco": "^7.1.0",
   "react": "^18.2.0",
