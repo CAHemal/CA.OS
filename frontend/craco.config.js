@@ -1,11 +1,13 @@
 const path = require("path");
 
 module.exports = {
-  eslint: {
-    enable: false,
-  },
   webpack: {
     configure: (webpackConfig) => {
+      webpackConfig.devtool = false;
+      return webpackConfig;
+    },
+  },
+};
 
       // Remove ESLintWebpackPlugin completely
       webpackConfig.plugins = webpackConfig.plugins.filter(
