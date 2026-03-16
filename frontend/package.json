@@ -33,7 +33,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "DISABLE_ESLINT_PLUGIN=true CI=false craco build",
+    "build": "DISABLE_ESLINT_PLUGIN=true CI=false node --max-old-space-size=4096 ./node_modules/.bin/craco build"
     "test": "craco test"
   },
  "devDependencies": {
