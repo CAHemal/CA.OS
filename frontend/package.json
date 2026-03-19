@@ -6,6 +6,7 @@
     "node": "20.x"
   },
   "dependencies": {
+    "@radix-ui/react-avatar": "^1.1.6",
     "@craco/craco": "^7.1.0",
     "class-variance-authority": "^0.7.0",
     "ajv": "^8.12.0",
