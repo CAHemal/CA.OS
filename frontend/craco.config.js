@@ -1,13 +1,9 @@
 const path = require("path");
-
 module.exports = {
   webpack: {
     configure: (webpackConfig) => {
+      // Disable source maps for smaller builds
       webpackConfig.devtool = false;
-      return webpackConfig;
-    },
-  },
-};
 
       // Remove ESLintWebpackPlugin completely
       webpackConfig.plugins = webpackConfig.plugins.filter(
