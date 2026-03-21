@@ -23,7 +23,7 @@ import api from '@/lib/api';
 
 
 const navItems = [
-  { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+ { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboardIcon },
   { path: '/tasks', label: 'Tasks', icon: ListTodo },
   { path: '/attendance', label: 'Attendance', icon: Clock },
   { path: '/leaves', label: 'Leaves', icon: CalendarDays },
