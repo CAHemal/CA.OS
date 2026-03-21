@@ -12,6 +12,7 @@ import LeavesPage from '@/pages/LeavesPage';
 import ClientsPage from '@/pages/ClientsPage';
 import QueriesPage from '@/pages/QueriesPage';
 import EmployeesPage from '@/pages/EmployeesPage';
+import DailyReportsPage from '@/pages/DailyReportsPage';
 
 function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth();
