@@ -16,9 +16,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import ChangePasswordDialog from '@/components/ChangePasswordDialog';
 import ProfileDialog from '@/components/ProfileDialog';
 import api from '@/lib/api';
-import {
-  LayoutDashboard, ListTodo, Clock, CalendarDays,
-  Users, Building2, MessageSquare, Bell, LogOut, Menu, X, MoreHorizontal, KeyRound, FileText
 } from 'lucide-react';
 
 const navItems = [
