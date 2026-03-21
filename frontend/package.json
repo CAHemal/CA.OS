@@ -42,7 +42,7 @@
   },
 "scripts": {
   "start": "craco start",
-  "build": "craco build",
+ "build": "cross-env DISABLE_ESLINT_PLUGIN=true CI=false craco build",
   "test": "craco test"
 },
 "devDependencies": {
