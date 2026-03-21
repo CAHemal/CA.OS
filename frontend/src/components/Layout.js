@@ -2,21 +2,24 @@ import { useState, useEffect, useCallback } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
-  LayoutDashboard, ListTodo, Clock, CalendarDays,
-  Users, Building2, MessageSquare, Bell, LogOut, Menu, X, MoreHorizontal, KeyRound
+  LayoutDashboard,
+  ListTodo,
+  Clock,
+  CalendarDays,
+  Users,
+  Building2,
+  MessageSquare,
+  Bell,
+  LogOut,
+  Menu,
+  X,
+  MoreHorizontal,
+  KeyRound,
+  FileText
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import {
-  DropdownMenu, DropdownMenuTrigger,
-  DropdownMenuContent, DropdownMenuItem
-} from '@/components/ui/dropdown-menu';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import ChangePasswordDialog from '@/components/ChangePasswordDialog';
-import ProfileDialog from '@/components/ProfileDialog';
+
 import api from '@/lib/api';
-} from 'lucide-react';
+
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
