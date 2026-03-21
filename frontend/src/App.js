@@ -49,6 +49,7 @@ function AppRoutes() {
       <Route path="/queries" element={<ProtectedRoute><QueriesPage /></ProtectedRoute>} />
       <Route path="/employees" element={<ProtectedRoute roles={['admin', 'manager']}><EmployeesPage /></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/daily-reports" element={<ProtectedRoute><DailyReportsPage /></ProtectedRoute>} />
     </Routes>
   );
 }
