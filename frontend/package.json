@@ -42,7 +42,7 @@
   },
   "scripts": {
     "start": "craco start",
-   "build": "DISABLE_ESLINT_PLUGIN=true CI=false node --max-old-space-size=7168 ./node_modules/.bin/craco build",
+  "build": "craco build",
     "test": "craco test"
   },
  "devDependencies": {
