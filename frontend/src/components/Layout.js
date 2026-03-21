@@ -16,6 +16,10 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import ChangePasswordDialog from '@/components/ChangePasswordDialog';
 import ProfileDialog from '@/components/ProfileDialog';
 import api from '@/lib/api';
+import {
+  LayoutDashboard, ListTodo, Clock, CalendarDays,
+  Users, Building2, MessageSquare, Bell, LogOut, Menu, X, MoreHorizontal, KeyRound, FileText
+} from 'lucide-react';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -24,6 +28,7 @@ const navItems = [
   { path: '/leaves', label: 'Leaves', icon: CalendarDays },
   { path: '/clients', label: 'Clients', icon: Building2 },
   { path: '/queries', label: 'Queries', icon: MessageSquare },
+  { path: '/daily-reports', label: 'Daily Reports', icon: FileText },
   { path: '/employees', label: 'Employees', icon: Users, roles: ['admin', 'manager'] },
 ];
 
