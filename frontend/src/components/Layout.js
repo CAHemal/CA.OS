@@ -3,7 +3,7 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
 import {
-  LayoutDashboard,
+  LayoutDashboard as LayoutDashboardIcon,
   ListTodo,
   Clock,
   CalendarDays,
