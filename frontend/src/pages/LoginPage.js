@@ -134,7 +134,13 @@ export default function LoginPage() {
                   admin@caos.com / admin123
                 </p>
               </div>
-            </form>
+              <p className="text-center text-sm text-zinc-500 mt-4">
+                New CA firm?{' '}
+                <Link to="/register" className="text-indigo-600 hover:text-indigo-700 font-medium">
+                  Register your firm
+                </Link>
+              </p>
+              </form>
           </CardContent>
         </Card>
       </div>
