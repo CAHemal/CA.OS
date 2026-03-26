@@ -1,3 +1,4 @@
+import InvoicesPage from '@/pages/InvoicesPage';
 import RegisterFirmPage from '@/pages/RegisterFirmPage';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
@@ -52,6 +53,7 @@ function AppRoutes() {
       <Route path="/employees" element={<ProtectedRoute roles={['admin', 'manager']}><EmployeesPage /></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
       <Route path="/daily-reports" element={<ProtectedRoute><DailyReportsPage /></ProtectedRoute>} />
+      <Route path="/invoices" element={<ProtectedRoute><InvoicesPage /></ProtectedRoute>} />
     </Routes>
   );
 }
