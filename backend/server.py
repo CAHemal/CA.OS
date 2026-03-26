@@ -133,6 +133,32 @@ class ComplianceCreate(BaseModel):
 class ComplianceStatusUpdate(BaseModel):
     status: str
 
+class InvoiceItem(BaseModel):
+    description: str
+    hsn_sac: str = ""
+    quantity: float = 1
+    rate: float
+    amount: float = 0
+
+class InvoiceCreate(BaseModel):
+    client_id: str
+    invoice_date: str
+    due_date: str
+    items: List[InvoiceItem]
+    gst_rate: float = 18.0
+    discount: float = 0
+    notes: str = ""
+    payment_terms: str = "Due on receipt"
+
+class InvoiceStatusUpdate(BaseModel):
+    status: str
+
+class PaymentRecord(BaseModel):
+    amount: float
+    payment_date: str
+    payment_mode: str = "bank_transfer"
+    reference_number: str = ""
+    notes: str = ""
 # ─── Helpers ───────────────────────────────────────────────────
 
 def create_token(user_id: str, role: str) -> str:
@@ -209,7 +235,18 @@ PRESET_DEADLINES = [
     {"title": "ROC Annual Return (MGT-7)", "category": "roc", "recurring": "annually", "description": "Annual return filing with ROC. Due November 29.", "month": 11, "day": 29},
     {"title": "ROC Financial Statements (AOC-4)", "category": "roc", "recurring": "annually", "description": "Filing of financial statements. Due October 30.", "month": 10, "day": 30},
 ]
-
+async def generate_invoice_number(firm_id):
+    year = datetime.now(timezone.utc).strftime("%Y")
+    prefix = f"INV-{year}-"
+    last = await db.invoices.find(
+        {"firm_id": firm_id, "invoice_number": {"$regex": f"^{prefix}"}},
+        {"_id": 0, "invoice_number": 1}
+    ).sort("invoice_number", -1).to_list(1)
+    if last:
+        last_num = int(last[0]["invoice_number"].split("-")[-1])
+        return f"{prefix}{str(last_num + 1).zfill(4)}"
+    return f"{prefix}0001"
+    
 async def seed_compliance_for_firm(firm_id):
     now = datetime.now(timezone.utc)
     year = now.year
@@ -696,6 +733,136 @@ async def check_compliance_reminders(user: dict = Depends(get_current_user)):
             sent += 1
     return {"reminders_sent": sent, "deadlines_checked": len(upcoming)}
 
+# ─── Invoice Routes ────────────────────────────────────────────
+
+@api_router.post("/invoices")
+async def create_invoice(data: InvoiceCreate, user: dict = Depends(get_current_user)):
+    await require_role(["admin", "manager"], user)
+    client = await db.clients.find_one({"id": data.client_id, **ff(user)}, {"_id": 0})
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found")
+    items = []
+    subtotal = 0
+    for item in data.items:
+        amount = round(item.quantity * item.rate, 2)
+        items.append({"description": item.description, "hsn_sac": item.hsn_sac, "quantity": item.quantity, "rate": item.rate, "amount": amount})
+        subtotal += amount
+    discount_amount = round(data.discount, 2)
+    taxable_amount = round(subtotal - discount_amount, 2)
+    gst_amount = round(taxable_amount * data.gst_rate / 100, 2)
+    cgst = round(gst_amount / 2, 2)
+    sgst = round(gst_amount / 2, 2)
+    total = round(taxable_amount + gst_amount, 2)
+    invoice_number = await generate_invoice_number(user.get("firm_id", ""))
+    invoice = {
+        "id": str(uuid.uuid4()), "firm_id": user.get("firm_id", ""), "invoice_number": invoice_number,
+        "client_id": data.client_id, "client_name": client["name"], "client_email": client.get("email", ""),
+        "client_phone": client.get("phone", ""), "client_company": client.get("company", ""),
+        "client_gst": client.get("gst_number", ""), "client_pan": client.get("pan_number", ""),
+        "invoice_date": data.invoice_date, "due_date": data.due_date, "items": items,
+        "subtotal": subtotal, "discount": discount_amount, "taxable_amount": taxable_amount,
+        "gst_rate": data.gst_rate, "gst_amount": gst_amount, "cgst": cgst, "sgst": sgst,
+        "total": total, "amount_paid": 0, "balance_due": total, "status": "draft", "payments": [],
+        "notes": data.notes, "payment_terms": data.payment_terms,
+        "created_by": user["id"], "created_by_name": user["name"],
+        "created_at": datetime.now(timezone.utc).isoformat(), "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.invoices.insert_one(invoice)
+    invoice.pop("_id", None)
+    return invoice
+
+@api_router.get("/invoices")
+async def list_invoices(status: Optional[str] = None, client_id: Optional[str] = None, user: dict = Depends(get_current_user)):
+    q = {**ff(user)}
+    if status and status != "all": q["status"] = status
+    if client_id: q["client_id"] = client_id
+    invoices = await db.invoices.find(q, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    for inv in invoices:
+        if inv["status"] == "sent" and inv["due_date"] < today:
+            inv["status"] = "overdue"
+            await db.invoices.update_one({"id": inv["id"]}, {"$set": {"status": "overdue"}})
+    return invoices
+
+@api_router.get("/invoices/{iid}")
+async def get_invoice(iid: str, user: dict = Depends(get_current_user)):
+    inv = await db.invoices.find_one({"id": iid, **ff(user)}, {"_id": 0})
+    if not inv: raise HTTPException(status_code=404, detail="Invoice not found")
+    firm = await db.firms.find_one({"id": user.get("firm_id", "")}, {"_id": 0})
+    inv["firm"] = firm
+    return inv
+
+@api_router.put("/invoices/{iid}")
+async def update_invoice(iid: str, data: InvoiceCreate, user: dict = Depends(get_current_user)):
+    await require_role(["admin", "manager"], user)
+    existing = await db.invoices.find_one({"id": iid, **ff(user)}, {"_id": 0})
+    if not existing: raise HTTPException(status_code=404, detail="Invoice not found")
+    if existing["status"] not in ["draft"]: raise HTTPException(status_code=400, detail="Can only edit draft invoices")
+    client = await db.clients.find_one({"id": data.client_id, **ff(user)}, {"_id": 0})
+    if not client: raise HTTPException(status_code=404, detail="Client not found")
+    items = []
+    subtotal = 0
+    for item in data.items:
+        amount = round(item.quantity * item.rate, 2)
+        items.append({"description": item.description, "hsn_sac": item.hsn_sac, "quantity": item.quantity, "rate": item.rate, "amount": amount})
+        subtotal += amount
+    discount_amount = round(data.discount, 2)
+    taxable_amount = round(subtotal - discount_amount, 2)
+    gst_amount = round(taxable_amount * data.gst_rate / 100, 2)
+    total = round(taxable_amount + gst_amount, 2)
+    updates = {
+        "client_id": data.client_id, "client_name": client["name"],
+        "client_email": client.get("email", ""), "client_company": client.get("company", ""),
+        "client_gst": client.get("gst_number", ""), "client_pan": client.get("pan_number", ""),
+        "invoice_date": data.invoice_date, "due_date": data.due_date, "items": items,
+        "subtotal": subtotal, "discount": discount_amount, "taxable_amount": taxable_amount,
+        "gst_rate": data.gst_rate, "gst_amount": gst_amount,
+        "cgst": round(gst_amount / 2, 2), "sgst": round(gst_amount / 2, 2),
+        "total": total, "balance_due": round(total - existing.get("amount_paid", 0), 2),
+        "notes": data.notes, "payment_terms": data.payment_terms,
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.invoices.update_one({"id": iid}, {"$set": updates})
+    return await db.invoices.find_one({"id": iid}, {"_id": 0})
+
+@api_router.put("/invoices/{iid}/status")
+async def update_invoice_status(iid: str, data: InvoiceStatusUpdate, user: dict = Depends(get_current_user)):
+    await require_role(["admin", "manager"], user)
+    valid = ["draft", "sent", "paid", "overdue", "cancelled"]
+    if data.status not in valid: raise HTTPException(status_code=400, detail=f"Status must be one of: {valid}")
+    await db.invoices.update_one({"id": iid, **ff(user)}, {"$set": {"status": data.status, "updated_at": datetime.now(timezone.utc).isoformat()}})
+    return await db.invoices.find_one({"id": iid}, {"_id": 0})
+
+@api_router.post("/invoices/{iid}/payment")
+async def record_payment(iid: str, data: PaymentRecord, user: dict = Depends(get_current_user)):
+    await require_role(["admin", "manager"], user)
+    inv = await db.invoices.find_one({"id": iid, **ff(user)}, {"_id": 0})
+    if not inv: raise HTTPException(status_code=404, detail="Invoice not found")
+    payment = {
+        "id": str(uuid.uuid4()), "amount": data.amount, "payment_date": data.payment_date,
+        "payment_mode": data.payment_mode, "reference_number": data.reference_number,
+        "notes": data.notes, "recorded_by": user["name"],
+        "recorded_at": datetime.now(timezone.utc).isoformat()
+    }
+    new_paid = round(inv.get("amount_paid", 0) + data.amount, 2)
+    new_balance = round(inv["total"] - new_paid, 2)
+    new_status = "paid" if new_balance <= 0 else inv["status"]
+    await db.invoices.update_one({"id": iid}, {
+        "$push": {"payments": payment},
+        "$set": {"amount_paid": new_paid, "balance_due": max(new_balance, 0), "status": new_status, "updated_at": datetime.now(timezone.utc).isoformat()}
+    })
+    if new_status == "paid":
+        await notify(user["id"], "payment_received", f"Invoice {inv['invoice_number']} fully paid by {inv['client_name']}", iid, user.get("firm_id", ""))
+    return await db.invoices.find_one({"id": iid}, {"_id": 0})
+
+@api_router.delete("/invoices/{iid}")
+async def delete_invoice(iid: str, user: dict = Depends(get_current_user)):
+    await require_role(["admin"], user)
+    inv = await db.invoices.find_one({"id": iid, **ff(user)}, {"_id": 0})
+    if not inv: raise HTTPException(status_code=404, detail="Invoice not found")
+    if inv["status"] not in ["draft", "cancelled"]: raise HTTPException(status_code=400, detail="Can only delete draft or cancelled invoices")
+    await db.invoices.delete_one({"id": iid})
+    return {"message": "Invoice deleted"}
 # ─── Dashboard ─────────────────────────────────────────────────
 
 @api_router.get("/dashboard/stats")
