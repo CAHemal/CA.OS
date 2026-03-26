@@ -3,7 +3,7 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   LayoutDashboard, ListTodo, Clock, CalendarDays,
-  Users, Building2, MessageSquare, Bell, LogOut, Menu, X, MoreHorizontal, KeyRound, FileText
+  Users, Building2, MessageSquare, Bell, LogOut, Menu, X, MoreHorizontal, KeyRound, FileText, IndianRupee
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -25,6 +25,7 @@ const navItems = [
   { path: '/clients', label: 'Clients', icon: Building2 },
   { path: '/queries', label: 'Queries', icon: MessageSquare },
   { path: '/daily-reports', label: 'Daily Reports', icon: FileText },
+  { path: '/invoices', label: 'Invoices', icon: IndianRupee },
   { path: '/employees', label: 'Employees', icon: Users, roles: ['admin', 'manager'] },
 ];
 
